@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # Secure OpenVPN server installer for Debian, Ubuntu, CentOS, Fedora and Arch Linux
-# https://github.com/angristan/openvpn-install
+# https://github.com/joaduo/openvpn-install
 
 VPN_NETWORK="172.31.0"
+CLIENT_TEMPLATE_APPEND=""
 
 function isRoot () {
 	if [ "$EUID" -ne 0 ]; then
@@ -286,8 +287,9 @@ function installQuestions () {
 	echo "   9) Google (Anycast: worldwide)"
 	echo "   10) Yandex Basic (Russia)"
 	echo "   11) AdGuard DNS (Russia)"
-	until [[ "$DNS" =~ ^[0-9]+$ ]] && [ "$DNS" -ge 1 ] && [ "$DNS" -le 11 ]; do
-		read -rp "DNS [1-10]: " -e -i 3 DNS
+	echo "   12) No DNS redirection"
+	until [[ "$DNS" =~ ^[0-9]+$ ]] && [ "$DNS" -ge 1 ] && [ "$DNS" -le 12 ]; do
+		read -rp "DNS [1-12]: " -e -i 12 DNS
 			if [[ $DNS == 2 ]] && [[ -e /etc/unbound/unbound.conf ]]; then
 				echo ""
 				echo "Unbound is already installed."
@@ -752,8 +754,13 @@ ifconfig-pool-persist ipp.txt" >> /etc/openvpn/server.conf
 			echo 'push "dhcp-option DNS 176.103.130.130"' >> /etc/openvpn/server.conf
 			echo 'push "dhcp-option DNS 176.103.130.131"' >> /etc/openvpn/server.conf
 		;;
+		12)
+			echo "No DNS push config"
+		;;
 	esac
-	echo 'push "redirect-gateway def1 bypass-dhcp"' >> /etc/openvpn/server.conf
+	if (($DN != 12)); then
+		echo 'push "redirect-gateway def1 bypass-dhcp"' >> /etc/openvpn/server.conf
+	fi
 
 	# IPv6 network settings if needed
 	if [[ "$IPV6_SUPPORT" = 'y' ]]; then
@@ -941,6 +948,7 @@ tls-version-min 1.2
 tls-cipher $CC_CIPHER
 setenv opt block-outside-dns # Prevent Windows 10 DNS leak
 verb 3" >> /etc/openvpn/client-template.txt
+	echo "$CLIENT_TEMPLATE_APPEND" >> /etc/openvpn/client-template.txt
 
 if [[ $COMPRESSION_ENABLED == "y"  ]]; then
 	echo "compress $COMPRESSION_ALG" >> /etc/openvpn/client-template.txt
