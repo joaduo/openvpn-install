@@ -3,6 +3,14 @@
 # Secure OpenVPN server installer for Debian, Ubuntu, CentOS, Amazon Linux 2, Fedora and Arch Linux
 # https://github.com/angristan/openvpn-install
 
+VPN_NETWORK="10.8.0"
+CLIENT_TEMPLATE_APPEND="
+remote-random
+remote vpn1.example.com 1194
+remote vpn2.example.com 1194
+route 172.16.0.0 255.255.0.0
+"
+
 function isRoot() {
 	if [ "$EUID" -ne 0 ]; then
 		return 1
@@ -104,8 +112,8 @@ function installUnbound() {
 			apt-get install -y unbound
 
 			# Configuration
-			echo 'interface: 10.8.0.1
-access-control: 10.8.0.1/24 allow
+			echo 'interface: $VPN_NETWORK.1
+access-control: $VPN_NETWORK.1/24 allow
 hide-identity: yes
 hide-version: yes
 use-caps-for-id: yes
@@ -115,8 +123,8 @@ prefetch: yes' >>/etc/unbound/unbound.conf
 			yum install -y unbound
 
 			# Configuration
-			sed -i 's|# interface: 0.0.0.0$|interface: 10.8.0.1|' /etc/unbound/unbound.conf
-			sed -i 's|# access-control: 127.0.0.0/8 allow|access-control: 10.8.0.1/24 allow|' /etc/unbound/unbound.conf
+			sed -i 's|# interface: 0.0.0.0$|interface: $VPN_NETWORK.1|' /etc/unbound/unbound.conf
+			sed -i 's|# access-control: 127.0.0.0/8 allow|access-control: $VPN_NETWORK.1/24 allow|' /etc/unbound/unbound.conf
 			sed -i 's|# hide-identity: no|hide-identity: yes|' /etc/unbound/unbound.conf
 			sed -i 's|# hide-version: no|hide-version: yes|' /etc/unbound/unbound.conf
 			sed -i 's|use-caps-for-id: no|use-caps-for-id: yes|' /etc/unbound/unbound.conf
@@ -125,8 +133,8 @@ prefetch: yes' >>/etc/unbound/unbound.conf
 			dnf install -y unbound
 
 			# Configuration
-			sed -i 's|# interface: 0.0.0.0$|interface: 10.8.0.1|' /etc/unbound/unbound.conf
-			sed -i 's|# access-control: 127.0.0.0/8 allow|access-control: 10.8.0.1/24 allow|' /etc/unbound/unbound.conf
+			sed -i 's|# interface: 0.0.0.0$|interface: $VPN_NETWORK.1|' /etc/unbound/unbound.conf
+			sed -i 's|# access-control: 127.0.0.0/8 allow|access-control: $VPN_NETWORK.1/24 allow|' /etc/unbound/unbound.conf
 			sed -i 's|# hide-identity: no|hide-identity: yes|' /etc/unbound/unbound.conf
 			sed -i 's|# hide-version: no|hide-version: yes|' /etc/unbound/unbound.conf
 			sed -i 's|# use-caps-for-id: no|use-caps-for-id: yes|' /etc/unbound/unbound.conf
@@ -148,8 +156,8 @@ prefetch: yes' >>/etc/unbound/unbound.conf
 	directory: "/etc/unbound"
 	trust-anchor-file: trusted-key.key
 	root-hints: root.hints
-	interface: 10.8.0.1
-	access-control: 10.8.0.1/24 allow
+	interface: $VPN_NETWORK.1
+	access-control: $VPN_NETWORK.1/24 allow
 	port: 53
 	num-threads: 2
 	use-caps-for-id: yes
@@ -183,8 +191,8 @@ private-address: ::ffff:0:0/96" >>/etc/unbound/unbound.conf
 
 		# Add Unbound 'server' for the OpenVPN subnet
 		echo 'server:
-interface: 10.8.0.1
-access-control: 10.8.0.1/24 allow
+interface: $VPN_NETWORK.1
+access-control: $VPN_NETWORK.1/24 allow
 hide-identity: yes
 hide-version: yes
 use-caps-for-id: yes
@@ -314,8 +322,9 @@ function installQuestions() {
 	echo "   11) AdGuard DNS (Anycast: worldwide)"
 	echo "   12) NextDNS (Anycast: worldwide)"
 	echo "   13) Custom"
-	until [[ $DNS =~ ^[0-9]+$ ]] && [ "$DNS" -ge 1 ] && [ "$DNS" -le 13 ]; do
-		read -rp "DNS [1-12]: " -e -i 3 DNS
+	echo "   14) None"
+	until [[ $DNS =~ ^[0-9]+$ ]] && [ "$DNS" -ge 1 ] && [ "$DNS" -le 14 ]; do
+		read -rp "DNS [1-14]: " -e -i 3 DNS
 		if [[ $DNS == 2 ]] && [[ -e /etc/unbound/unbound.conf ]]; then
 			echo ""
 			echo "Unbound is already installed."
@@ -770,7 +779,7 @@ persist-key
 persist-tun
 keepalive 10 120
 topology subnet
-server 10.8.0.0 255.255.255.0
+server $VPN_NETWORK.0 255.255.255.0
 ifconfig-pool-persist ipp.txt" >>/etc/openvpn/server.conf
 
 	# DNS resolvers
@@ -792,7 +801,7 @@ ifconfig-pool-persist ipp.txt" >>/etc/openvpn/server.conf
 		done
 		;;
 	2) # Self-hosted DNS resolver (Unbound)
-		echo 'push "dhcp-option DNS 10.8.0.1"' >>/etc/openvpn/server.conf
+		echo 'push "dhcp-option DNS $VPN_NETWORK.1"' >>/etc/openvpn/server.conf
 		if [[ $IPV6_SUPPORT == 'y' ]]; then
 			echo 'push "dhcp-option DNS fd42:42:42:42::1"' >>/etc/openvpn/server.conf
 		fi
@@ -843,8 +852,13 @@ ifconfig-pool-persist ipp.txt" >>/etc/openvpn/server.conf
 			echo "push \"dhcp-option DNS $DNS2\"" >>/etc/openvpn/server.conf
 		fi
 		;;
+	14) # No DNS
+		echo "No DNS push config"
+		;;
 	esac
-	echo 'push "redirect-gateway def1 bypass-dhcp"' >>/etc/openvpn/server.conf
+	if (($DNS != 14)); then
+		echo 'push "redirect-gateway def1 bypass-dhcp"' >>/etc/openvpn/server.conf
+	fi
 
 	# IPv6 network settings if needed
 	if [[ $IPV6_SUPPORT == 'y' ]]; then
@@ -956,7 +970,7 @@ verb 3" >>/etc/openvpn/server.conf
 
 	# Script to add rules
 	echo "#!/bin/sh
-iptables -t nat -I POSTROUTING 1 -s 10.8.0.0/24 -o $NIC -j MASQUERADE
+iptables -t nat -I POSTROUTING 1 -s $VPN_NETWORK.0/24 -o $NIC -j MASQUERADE
 iptables -I INPUT 1 -i tun0 -j ACCEPT
 iptables -I FORWARD 1 -i $NIC -o tun0 -j ACCEPT
 iptables -I FORWARD 1 -i tun0 -o $NIC -j ACCEPT
@@ -972,7 +986,7 @@ ip6tables -I INPUT 1 -i $NIC -p $PROTOCOL --dport $PORT -j ACCEPT" >>/etc/iptabl
 
 	# Script to remove rules
 	echo "#!/bin/sh
-iptables -t nat -D POSTROUTING -s 10.8.0.0/24 -o $NIC -j MASQUERADE
+iptables -t nat -D POSTROUTING -s $VPN_NETWORK.0/24 -o $NIC -j MASQUERADE
 iptables -D INPUT -i tun0 -j ACCEPT
 iptables -D FORWARD -i $NIC -o tun0 -j ACCEPT
 iptables -D FORWARD -i tun0 -o $NIC -j ACCEPT
@@ -1039,7 +1053,7 @@ tls-cipher $CC_CIPHER
 ignore-unknown-option block-outside-dns
 setenv opt block-outside-dns # Prevent Windows 10 DNS leak
 verb 3" >>/etc/openvpn/client-template.txt
-
+	echo "$CLIENT_TEMPLATE_APPEND" >> /etc/openvpn/client-template.txt
 	if [[ $COMPRESSION_ENABLED == "y" ]]; then
 		echo "compress $COMPRESSION_ALG" >>/etc/openvpn/client-template.txt
 	fi
@@ -1288,7 +1302,7 @@ function removeOpenVPN() {
 
 function manageMenu() {
 	echo "Welcome to OpenVPN-install!"
-	echo "The git repository is available at: https://github.com/angristan/openvpn-install"
+	echo "The git repository is available at: https://github.com/joaduo/openvpn-install"
 	echo ""
 	echo "It looks like OpenVPN is already installed."
 	echo ""
