@@ -3,14 +3,6 @@
 # Secure OpenVPN server installer for Debian, Ubuntu, CentOS, Amazon Linux 2, Fedora and Arch Linux
 # https://github.com/angristan/openvpn-install
 
-VPN_NETWORK="10.8.0"
-CLIENT_TEMPLATE_APPEND="
-remote-random
-remote vpn1.example.com 1194
-remote vpn2.example.com 1194
-route 172.16.0.0 255.255.0.0
-"
-
 function isRoot() {
 	if [ "$EUID" -ne 0 ]; then
 		return 1
@@ -224,9 +216,16 @@ function installQuestions() {
 	echo "I need to ask you a few questions before starting the setup."
 	echo "You can leave the default options and just press enter if you are ok with them."
 	echo ""
+
+	echo "Please provide the VPN network prefix. If you are going to use  10.8.0.0/24, then type prefix 10.8.0"
+	until [[ $VPN_NETWORK =~ ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){2}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$ ]]; do
+		echo "Format bust be like XXX.XXX.XXX"
+		VPN_NETWORK=${VPN_NETWORK:-10.8.0}
+		read -rp "VPN_NETWORK: " -e  -i "$VPN_NETWORK" VPN_NETWORK
+	done
+
 	echo "I need to know the IPv4 address of the network interface you want OpenVPN listening to."
 	echo "Unless your server is behind NAT, it should be your public IPv4 address."
-
 	# Detect public IPv4 address and pre-fill for the user
 	IP=$(ip -4 addr | sed -ne 's|^.* inet \([^/]*\)/.* scope global.*$|\1|p' | head -1)
 	if [[ -z $IP ]]; then
@@ -1053,7 +1052,11 @@ tls-cipher $CC_CIPHER
 ignore-unknown-option block-outside-dns
 setenv opt block-outside-dns # Prevent Windows 10 DNS leak
 verb 3" >>/etc/openvpn/client-template.txt
-	echo "$CLIENT_TEMPLATE_APPEND" >> /etc/openvpn/client-template.txt
+	if [[ "$CLIENT_TEMPLATE_APPEND" != "" ]]; then
+		echo "appending costum config CLIENT_TEMPLATE_APPEND to /etc/openvpn/client-template.txt ..."
+		echo "" >> /etc/openvpn/client-template.txt
+		echo "$CLIENT_TEMPLATE_APPEND" >> /etc/openvpn/client-template.txt
+	fi
 	if [[ $COMPRESSION_ENABLED == "y" ]]; then
 		echo "compress $COMPRESSION_ALG" >>/etc/openvpn/client-template.txt
 	fi
