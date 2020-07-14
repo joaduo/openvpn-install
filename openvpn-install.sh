@@ -104,19 +104,19 @@ function installUnbound() {
 			apt-get install -y unbound
 
 			# Configuration
-			echo 'interface: $VPN_NETWORK.1
+			echo "interface: $VPN_NETWORK.1
 access-control: $VPN_NETWORK.1/24 allow
 hide-identity: yes
 hide-version: yes
 use-caps-for-id: yes
-prefetch: yes' >>/etc/unbound/unbound.conf
+prefetch: yes" >>/etc/unbound/unbound.conf
 
 		elif [[ $OS =~ (centos|amzn) ]]; then
 			yum install -y unbound
 
 			# Configuration
-			sed -i 's|# interface: 0.0.0.0$|interface: $VPN_NETWORK.1|' /etc/unbound/unbound.conf
-			sed -i 's|# access-control: 127.0.0.0/8 allow|access-control: $VPN_NETWORK.1/24 allow|' /etc/unbound/unbound.conf
+			sed -i "s|# interface: 0.0.0.0$|interface: $VPN_NETWORK.1|" /etc/unbound/unbound.conf
+			sed -i "s|# access-control: 127.0.0.0/8 allow|access-control: $VPN_NETWORK.1/24 allow|" /etc/unbound/unbound.conf
 			sed -i 's|# hide-identity: no|hide-identity: yes|' /etc/unbound/unbound.conf
 			sed -i 's|# hide-version: no|hide-version: yes|' /etc/unbound/unbound.conf
 			sed -i 's|use-caps-for-id: no|use-caps-for-id: yes|' /etc/unbound/unbound.conf
@@ -125,8 +125,8 @@ prefetch: yes' >>/etc/unbound/unbound.conf
 			dnf install -y unbound
 
 			# Configuration
-			sed -i 's|# interface: 0.0.0.0$|interface: $VPN_NETWORK.1|' /etc/unbound/unbound.conf
-			sed -i 's|# access-control: 127.0.0.0/8 allow|access-control: $VPN_NETWORK.1/24 allow|' /etc/unbound/unbound.conf
+			sed -i "s|# interface: 0.0.0.0$|interface: $VPN_NETWORK.1|" /etc/unbound/unbound.conf
+			sed -i "s|# access-control: 127.0.0.0/8 allow|access-control: $VPN_NETWORK.1/24 allow|" /etc/unbound/unbound.conf
 			sed -i 's|# hide-identity: no|hide-identity: yes|' /etc/unbound/unbound.conf
 			sed -i 's|# hide-version: no|hide-version: yes|' /etc/unbound/unbound.conf
 			sed -i 's|# use-caps-for-id: no|use-caps-for-id: yes|' /etc/unbound/unbound.conf
@@ -141,7 +141,7 @@ prefetch: yes' >>/etc/unbound/unbound.conf
 				mv /etc/unbound/unbound.conf /etc/unbound/unbound.conf.old
 			fi
 
-			echo 'server:
+			echo "server:
 	use-syslog: yes
 	do-daemonize: no
 	username: "unbound"
@@ -157,7 +157,7 @@ prefetch: yes' >>/etc/unbound/unbound.conf
 	hide-identity: yes
 	hide-version: yes
 	qname-minimisation: yes
-	prefetch: yes' >/etc/unbound/unbound.conf
+	prefetch: yes" >/etc/unbound/unbound.conf
 		fi
 
 		# IPv6 DNS for all OS
@@ -182,7 +182,7 @@ private-address: ::ffff:0:0/96" >>/etc/unbound/unbound.conf
 		echo 'include: /etc/unbound/openvpn.conf' >>/etc/unbound/unbound.conf
 
 		# Add Unbound 'server' for the OpenVPN subnet
-		echo 'server:
+		echo "server:
 interface: $VPN_NETWORK.1
 access-control: $VPN_NETWORK.1/24 allow
 hide-identity: yes
@@ -197,7 +197,7 @@ private-address: 169.254.0.0/16
 private-address: fd00::/8
 private-address: fe80::/10
 private-address: 127.0.0.0/8
-private-address: ::ffff:0:0/96' >/etc/unbound/openvpn.conf
+private-address: ::ffff:0:0/96" >/etc/unbound/openvpn.conf
 		if [[ $IPV6_SUPPORT == 'y' ]]; then
 			echo 'interface: fd42:42:42:42::1
 access-control: fd42:42:42:42::/112 allow' >>/etc/unbound/openvpn.conf
