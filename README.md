@@ -1,19 +1,19 @@
 # openvpn-install
 
-![Test](https://github.com/angristan/openvpn-install/workflows/Test/badge.svg) ![Lint](https://github.com/angristan/openvpn-install/workflows/Lint/badge.svg)
+![Test](https://github.com/joaduo/openvpn-install/workflows/Test/badge.svg) ![Lint](https://github.com/joaduo/openvpn-install/workflows/Lint/badge.svg)
 
 OpenVPN installer for Debian, Ubuntu, Fedora, CentOS and Arch Linux.
 
 This script will let you setup your own secure VPN server in just a few seconds.
 
-You can also check out [wireguard-install](https://github.com/angristan/wireguard-install), a simple installer for a simpler, safer, faster and more modern VPN protocol.
+You can also check out [wireguard-install](https://github.com/joaduo/wireguard-install), a simple installer for a simpler, safer, faster and more modern VPN protocol.
 
 ## Usage
 
 First, get the script and make it executable:
 
 ```bash
-curl -O https://raw.githubusercontent.com/angristan/openvpn-install/master/openvpn-install.sh
+curl -O https://raw.githubusercontent.com/joaduo/openvpn-install/master/openvpn-install.sh
 chmod +x openvpn-install.sh
 ```
 
@@ -189,18 +189,18 @@ Solutions that provision a ready to use OpenVPN server based on this script in o
 
 Thanks ❤️
 
-[![](https://sourcerer.io/fame/angristan/angristan/openvpn-install/images/0)](https://github.com/angristan/openvpn-install/graphs/contributors)
-[![](https://sourcerer.io/fame/angristan/angristan/openvpn-install/images/1)](https://github.com/angristan/openvpn-install/graphs/contributors)
-[![](https://sourcerer.io/fame/angristan/angristan/openvpn-install/images/2)](https://github.com/angristan/openvpn-install/graphs/contributors)
-[![](https://sourcerer.io/fame/angristan/angristan/openvpn-install/images/3)](https://github.com/angristan/openvpn-install/graphs/contributors)
-[![](https://sourcerer.io/fame/angristan/angristan/openvpn-install/images/4)](https://github.com/angristan/openvpn-install/graphs/contributors)
-[![](https://sourcerer.io/fame/angristan/angristan/openvpn-install/images/5)](https://github.com/angristan/openvpn-install/graphs/contributors)
-[![](https://sourcerer.io/fame/angristan/angristan/openvpn-install/images/6)](https://github.com/angristan/openvpn-install/graphs/contributors)
-[![](https://sourcerer.io/fame/angristan/angristan/openvpn-install/images/7)](https://github.com/angristan/openvpn-install/graphs/contributors)
+[![](https://sourcerer.io/fame/joaduo/joaduo/openvpn-install/images/0)](https://github.com/joaduo/openvpn-install/graphs/contributors)
+[![](https://sourcerer.io/fame/joaduo/joaduo/openvpn-install/images/1)](https://github.com/joaduo/openvpn-install/graphs/contributors)
+[![](https://sourcerer.io/fame/joaduo/joaduo/openvpn-install/images/2)](https://github.com/joaduo/openvpn-install/graphs/contributors)
+[![](https://sourcerer.io/fame/joaduo/joaduo/openvpn-install/images/3)](https://github.com/joaduo/openvpn-install/graphs/contributors)
+[![](https://sourcerer.io/fame/joaduo/joaduo/openvpn-install/images/4)](https://github.com/joaduo/openvpn-install/graphs/contributors)
+[![](https://sourcerer.io/fame/joaduo/joaduo/openvpn-install/images/5)](https://github.com/joaduo/openvpn-install/graphs/contributors)
+[![](https://sourcerer.io/fame/joaduo/joaduo/openvpn-install/images/6)](https://github.com/joaduo/openvpn-install/graphs/contributors)
+[![](https://sourcerer.io/fame/joaduo/joaduo/openvpn-install/images/7)](https://github.com/joaduo/openvpn-install/graphs/contributors)
 
 ### Code formatting
 
-We use [shellcheck](https://github.com/koalaman/shellcheck) and [shfmt](https://github.com/mvdan/sh) to enforce bash styling guidelines and good practices. They are executed for each commit / PR with GitHub Actions, so you can check the configuration [here](https://github.com/angristan/openvpn-install/blob/master/.github/workflows/push.yml).
+We use [shellcheck](https://github.com/koalaman/shellcheck) and [shfmt](https://github.com/mvdan/sh) to enforce bash styling guidelines and good practices. They are executed for each commit / PR with GitHub Actions, so you can check the configuration [here](https://github.com/joaduo/openvpn-install/blob/master/.github/workflows/push.yml).
 
 ## Security and Encryption
 
@@ -346,7 +346,7 @@ The script supports both and uses `tls-crypt` by default.
 
 ## Say thanks
 
-You can [say thanks](https://saythanks.io/to/angristan%40pm.me) if you want!
+You can [say thanks](https://saythanks.io/to/joaduo%40pm.me) if you want!
 
 ## Credits & Licence
 
