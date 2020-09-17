@@ -1,3 +1,12 @@
+# FORK of openvpn-install
+
+Adds following useful config variables:
+- VPN_NETWORK
+- CLIENT_TEMPLATE_APPEND (append to client template file)
+- No DNS option 14
+
+Documentation below is copied from original project (except links pointing to this repo)
+
 # openvpn-install
 
 ![Test](https://github.com/joaduo/openvpn-install/workflows/Test/badge.svg) ![Lint](https://github.com/joaduo/openvpn-install/workflows/Lint/badge.svg)
