@@ -9,7 +9,9 @@ Documentation below is copied from original project (except links pointing to th
 
 # openvpn-install
 
-![Test](https://github.com/joaduo/openvpn-install/workflows/Test/badge.svg) ![Lint](https://github.com/joaduo/openvpn-install/workflows/Lint/badge.svg)
+![Test](https://github.com/joaduo/openvpn-install/workflows/Test/badge.svg)
+![Lint](https://github.com/joaduo/openvpn-install/workflows/Lint/badge.svg)
+![visitors](https://visitor-badge.glitch.me/badge?page_id=joaduo.openvpn-install)
 
 OpenVPN installer for Debian, Ubuntu, Fedora, CentOS and Arch Linux.
 
@@ -153,7 +155,7 @@ More Q&A in [FAQ.md](FAQ.md).
 
 **A:** I recommend these:
 
-- [Vultr](https://goo.gl/Xyd1Sc): Worldwide locations, IPv6 support, starting at \$3.50/month
+- [Vultr](https://www.vultr.com/?ref=8537055-6G): Worldwide locations, IPv6 support, starting at \$3.50/month
 - [Hetzner](https://hetzner.cloud/?ref=ywtlvZsjgeDq): Germany, IPv6, 20 TB of traffic, starting at €3/month
 - [Digital Ocean](https://goo.gl/qXrNLK): Worldwide locations, IPv6 support, starting at \$5/month
 - [PulseHeberg](https://goo.gl/76yqW5): France, unlimited bandwidth, starting at €3/month
@@ -256,9 +258,8 @@ By default, OpenVPN uses `BF-CBC` as the data channel cipher. Blowfish is an old
 
 > The default is BF-CBC, an abbreviation for Blowfish in Cipher Block Chaining mode.
 >
-> Using BF-CBC is no longer recommended, because of its 64-bit block size. This small block size allows attacks based on collisions, as demonstrated by SWEET32. See https://community.openvpn.net/openvpn/wiki/SWEET32 for details.
-
-> Security researchers at INRIA published an attack on 64-bit block ciphers, such as 3DES and Blowfish. They show that they are able to recover plaintext when the same data is sent often enough, and show how they can use cross-site scripting vulnerabilities to send data of interest often enough. This works over HTTPS, but also works for HTTP-over-OpenVPN. See https://sweet32.info/ for a much better and more elaborate explanation.
+> Using BF-CBC is no longer recommended, because of its 64-bit block size. This small block size allows attacks based on collisions, as demonstrated by SWEET32. See <https://community.openvpn.net/openvpn/wiki/SWEET32> for details.
+> Security researchers at INRIA published an attack on 64-bit block ciphers, such as 3DES and Blowfish. They show that they are able to recover plaintext when the same data is sent often enough, and show how they can use cross-site scripting vulnerabilities to send data of interest often enough. This works over HTTPS, but also works for HTTP-over-OpenVPN. See <https://sweet32.info/> for a much better and more elaborate explanation.
 >
 > OpenVPN's default cipher, BF-CBC, is affected by this attack.
 
